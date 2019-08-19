@@ -15,8 +15,10 @@ namespace Matrizes
                 Int32 qtCaracteresLinha = 0;
                 Char[,] array = new Char[0, 0];
                 Boolean validarFormatoMatriz = false, validarMatrizQuadrada = false;
+                String nomeDoArquivo;
+                nomeDoArquivo = PerguntarNomeArquivo();
 
-                using (StreamReader arquivo = new StreamReader("../../matrix.txt"))
+                using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
                 {
                     while ((linha = arquivo.ReadLine()) != null)
                     {
@@ -49,11 +51,20 @@ namespace Matrizes
                     ImprimirMatrizInvertida(array, qtCaracteresLinha);
                     CopiarParaNovoArquivo(array, qtCaracteresLinha);
                 }
+                else
+                {
+                    Console.ReadKey();
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("\nMatriz em formato incorreto.");
+                Console.ReadKey();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Arquivo não encontrado:");
-                Console.WriteLine(e.Message);
+                Console.WriteLine("\n"+e.Message);
+                Console.ReadKey();
             }
 
         }
@@ -128,6 +139,21 @@ namespace Matrizes
                 return false;
             }
             return true;
+        }
+
+        private static String PerguntarNomeArquivo()
+        {
+            Console.Write("Digite o nome do arquivo TXT a ser a ser imprimido: ");
+            String nomeDoArquivo = Console.ReadLine().ToString().Trim().ToLower();
+
+            if (String.IsNullOrEmpty(nomeDoArquivo)) nomeDoArquivo = "matriz";
+
+            if (!(nomeDoArquivo.Split('.').Length > 1))
+            {
+                nomeDoArquivo = nomeDoArquivo + ".txt";
+            }
+
+            return nomeDoArquivo;
         }
     }
 }
