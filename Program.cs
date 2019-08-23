@@ -10,14 +10,20 @@ namespace Matrizes
         {
             try
             {
-                String linha;
-                Int32 qtColunas = 0;
-                Int32 qtCaracteresLinha = 0;
+                String linha, nomeDoArquivo;
+                Int32 qtColunas = 0, qtCaracteresLinha = 0;
                 Char[,] array = new Char[0, 0];
+                Int16 opcaoMenu = 0;
                 Boolean validarFormatoMatriz = false, validarMatrizQuadrada = false;
-                String nomeDoArquivo;
+                
                 nomeDoArquivo = PerguntarNomeArquivo();
 
+                while (opcaoMenu != 57)
+                {
+                    opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
+                    AbrirMenu();
+                };
+                
                 using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
                 {
                     while ((linha = arquivo.ReadLine()) != null)
@@ -67,6 +73,26 @@ namespace Matrizes
                 Console.ReadKey();
             }
 
+        }
+
+        private static void AbrirMenu()
+        {
+            Console.Clear();
+
+            String tabulacao = "\t\t\t\t\t*", pularLinhaComTabulacao = "\n" + tabulacao;
+            String textoMenu = (    tabulacao + "****************************************" +
+                        pularLinhaComTabulacao + "\tEscolha uma das opções \t\t*" +
+                        pularLinhaComTabulacao + tabulacao + 
+                        pularLinhaComTabulacao + "\t1 - Imprimir matriz \t\t*" +
+                        pularLinhaComTabulacao + "\t2 - Inverter matriz \t\t*" +
+                        pularLinhaComTabulacao + "\t3 - Trocar caractere da matriz \t*" +
+                        pularLinhaComTabulacao + "\t4 - Salvar matriz \t\t*" +
+                        pularLinhaComTabulacao + tabulacao + 
+                        pularLinhaComTabulacao + "\t9 - Sair! \t\t\t*" +
+                        pularLinhaComTabulacao + tabulacao +
+                        pularLinhaComTabulacao + "****************************************");
+
+            Console.WriteLine(textoMenu);
         }
 
         private static void ImprimirMatrizOriginal(Char[,] array, int tamanho)
