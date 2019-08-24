@@ -15,15 +15,15 @@ namespace Matrizes
                 Char[,] array = new Char[0, 0];
                 Int16 opcaoMenu = 0;
                 Boolean validarFormatoMatriz = false, validarMatrizQuadrada = false;
-                
+
                 nomeDoArquivo = PerguntarNomeArquivo();
 
                 while (opcaoMenu != 57)
                 {
-                    opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
                     AbrirMenu();
+                    opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
                 };
-                
+
                 using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
                 {
                     while ((linha = arquivo.ReadLine()) != null)
@@ -69,7 +69,7 @@ namespace Matrizes
             }
             catch (Exception e)
             {
-                Console.WriteLine("\n"+e.Message);
+                Console.WriteLine("\n" + e.Message);
                 Console.ReadKey();
             }
 
@@ -80,14 +80,14 @@ namespace Matrizes
             Console.Clear();
 
             String tabulacao = "\t\t\t\t\t*", pularLinhaComTabulacao = "\n" + tabulacao;
-            String textoMenu = (    tabulacao + "****************************************" +
+            String textoMenu = (tabulacao + "****************************************" +
                         pularLinhaComTabulacao + "\tEscolha uma das opções \t\t*" +
-                        pularLinhaComTabulacao + tabulacao + 
+                        pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "\t1 - Imprimir matriz \t\t*" +
                         pularLinhaComTabulacao + "\t2 - Inverter matriz \t\t*" +
                         pularLinhaComTabulacao + "\t3 - Trocar caractere da matriz \t*" +
                         pularLinhaComTabulacao + "\t4 - Salvar matriz \t\t*" +
-                        pularLinhaComTabulacao + tabulacao + 
+                        pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "\t9 - Sair! \t\t\t*" +
                         pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "****************************************");
@@ -129,7 +129,7 @@ namespace Matrizes
             Console.WriteLine("\nS - SIM\nN - NÃO");
             Char opcao = Console.ReadKey().KeyChar;
 
-            if(opcao.ToString().Trim().ToUpper() == "S")
+            if (opcao.ToString().Trim().ToUpper() == "S")
             {
                 StreamWriter salvar = new StreamWriter("../../matrizInvertida.txt");
 
