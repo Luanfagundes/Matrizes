@@ -12,17 +12,10 @@ namespace Matrizes
             {
                 String linha, nomeDoArquivo;
                 Int32 qtColunas = 0, qtCaracteresLinha = 0;
-                Char[,] array = new Char[0, 0];
+                Char[,] matrizOriginal = new Char[0, 0];
                 Int16 opcaoMenu = 0;
-                Boolean validarFormatoMatriz = false, validarMatrizQuadrada = false;
 
                 nomeDoArquivo = PerguntarNomeArquivo();
-
-                while (opcaoMenu != 57)
-                {
-                    AbrirMenu();
-                    opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
-                };
 
                 using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
                 {
@@ -32,34 +25,49 @@ namespace Matrizes
                         if (qtCaracteresLinha == 0)
                         {
                             qtCaracteresLinha = linha.Length;
-                            array = new Char[linha.Length, linha.Length];
+                            matrizOriginal = new Char[linha.Length, linha.Length];
                         }
 
-                        validarFormatoMatriz = !ValidarFormatoMatriz(qtCaracteresLinha, linha);
-                        if (validarFormatoMatriz) break;
-
-                        //Salva no array.
+                        //Salva no array na variavel array.
                         for (int posicaoLinha = 0; posicaoLinha < linha.Length; posicaoLinha++)
                         {
-                            array[qtColunas, posicaoLinha] = linha[posicaoLinha];
+                            matrizOriginal[qtColunas, posicaoLinha] = linha[posicaoLinha];
                         }
 
                         qtColunas++;
                     }
 
-                    validarMatrizQuadrada = !ValidarMatrizQuadrada(qtColunas, qtCaracteresLinha);
+                    while (opcaoMenu != 57)
+                    {
+                        Menu();
+                        opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
+                        Console.Clear();
 
-                }
-
-                if (!validarFormatoMatriz && !validarMatrizQuadrada)
-                {
-                    ImprimirMatrizOriginal(array, qtCaracteresLinha);
-                    ImprimirMatrizInvertida(array, qtCaracteresLinha);
-                    CopiarParaNovoArquivo(array, qtCaracteresLinha);
-                }
-                else
-                {
-                    Console.ReadKey();
+                        switch (opcaoMenu)
+                        {
+                            case 49:
+                                ImprimirMatrizOriginal(matrizOriginal, qtCaracteresLinha);
+                                break;
+                            case 50:
+                                ImprimirMatrizInvertida(matrizOriginal, qtCaracteresLinha);
+                                break;
+                            case 51:
+                                break;
+                            case 52:
+                                CopiarParaNovoArquivo(matrizOriginal, qtCaracteresLinha);
+                                break;
+                            case 57:
+                                break;
+                            default:
+                                Console.WriteLine("\nOpção invalida.");
+                                break;
+                        }
+                        if (opcaoMenu != 57)
+                        {
+                            Console.WriteLine("\n\n\n\n\t\t\t\t\t\tPressione uma tecla para voltar!");
+                            Console.ReadKey();
+                        }
+                    }
                 }
             }
             catch (IndexOutOfRangeException)
@@ -75,10 +83,9 @@ namespace Matrizes
 
         }
 
-        private static void AbrirMenu()
+        private static void Menu()
         {
             Console.Clear();
-
             String tabulacao = "\t\t\t\t\t*", pularLinhaComTabulacao = "\n" + tabulacao;
             String textoMenu = (tabulacao + "****************************************" +
                         pularLinhaComTabulacao + "\tEscolha uma das opções \t\t*" +
