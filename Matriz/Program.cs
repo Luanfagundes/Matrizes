@@ -12,7 +12,7 @@ namespace Matrizes
             {
                 String linha, nomeDoArquivo;
                 Int32 qtColunas = 0, qtCaracteresLinha = 0;
-                Char[,] matrizOriginal = new Char[0, 0];
+                Char[,] matrizAtual = new Char[0, 0];
                 Int16 opcaoMenu = 0;
 
                 nomeDoArquivo = PerguntarNomeArquivo();
@@ -25,13 +25,13 @@ namespace Matrizes
                         if (qtCaracteresLinha == 0)
                         {
                             qtCaracteresLinha = linha.Length;
-                            matrizOriginal = new Char[linha.Length, linha.Length];
+                            matrizAtual = new Char[linha.Length, linha.Length];
                         }
 
                         //Salva no array na variavel array.
                         for (int posicaoLinha = 0; posicaoLinha < linha.Length; posicaoLinha++)
                         {
-                            matrizOriginal[qtColunas, posicaoLinha] = linha[posicaoLinha];
+                            matrizAtual[qtColunas, posicaoLinha] = linha[posicaoLinha];
                         }
 
                         qtColunas++;
@@ -46,15 +46,17 @@ namespace Matrizes
                         switch (opcaoMenu)
                         {
                             case 49:
-                                ImprimirMatrizOriginal(matrizOriginal, qtCaracteresLinha);
+                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
                                 break;
                             case 50:
-                                ImprimirMatrizInvertida(matrizOriginal, qtCaracteresLinha);
+                                matrizAtual = InverterMatriz(matrizAtual, qtCaracteresLinha);
                                 break;
                             case 51:
+                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+                                matrizAtual = TrocarCaractere(matrizAtual, qtCaracteresLinha);
                                 break;
                             case 52:
-                                CopiarParaNovoArquivo(matrizOriginal, qtCaracteresLinha);
+                                CopiarParaNovoArquivo(matrizAtual, qtCaracteresLinha);
                                 break;
                             case 57:
                                 break;
@@ -68,11 +70,16 @@ namespace Matrizes
                             Console.ReadKey();
                         }
                     }
-                }
+                }//Data = {System.Collections.ListDictionaryInternal}
             }
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine("\nMatriz em formato incorreto.");
+                Console.ReadKey();
+            }
+            catch (FormatException e)
+            {
+                Console.WriteLine("\nValor incorreto!");
                 Console.ReadKey();
             }
             catch (Exception e)
@@ -81,6 +88,48 @@ namespace Matrizes
                 Console.ReadKey();
             }
 
+        }
+
+        private static Char[,] TrocarCaractere(Char[,] array, int tamanho)
+        {
+            Char[,] novoArray = new Char[tamanho, tamanho];
+            Int32 linha = 0, coluna = 0;
+            Char novoValor = '0';
+            Boolean validacao = true;
+
+            while (validacao)
+            {
+                Console.Write("\nDigite a LINHA que deseja alterar de 0 a " + (tamanho - 1) + ": ");
+                linha = Convert.ToInt32(Console.ReadLine());
+                if (linha < tamanho || linha >= 0) validacao = false;
+            }
+            validacao = true;
+            while (validacao)
+            {
+                Console.Write("\nDigite a COLUNA que deseja alterar de 0 a " + (tamanho - 1) + ": ");
+                coluna = Convert.ToInt32(Console.ReadLine());
+                if (coluna < tamanho || coluna >= 0) validacao = false;
+            }
+
+            Console.Write("\nDigite o NOVO VALOR a ser alterado: ");
+            novoValor = Convert.ToChar(Console.ReadLine());
+
+            for (int i = 0; i < tamanho; i++)
+            {
+                for (int j = 0; j < tamanho; j++)
+                {
+                    novoArray[i, j] = array[j, i];
+                }
+            }
+
+            novoArray[linha, coluna] = novoValor;
+
+            Console.Clear();
+            ImprimirMatrizOriginal(array, tamanho);
+            Console.WriteLine("\n\n");
+            ImprimirMatrizOriginal(novoArray, tamanho);
+
+            return novoArray;
         }
 
         private static void Menu()
@@ -104,7 +153,7 @@ namespace Matrizes
 
         private static void ImprimirMatrizOriginal(Char[,] array, int tamanho)
         {
-            Console.WriteLine("Matriz Quadrada Original !");
+            Console.WriteLine("Matriz Quadrada atual !");
             Console.WriteLine();
             for (int i = 0; i < tamanho; i++)
             {
@@ -116,41 +165,38 @@ namespace Matrizes
             }
         }
 
-        private static void ImprimirMatrizInvertida(Char[,] array, int tamanho)
+        private static Char[,] InverterMatriz(Char[,] array, int tamanho)
         {
-            Console.WriteLine("\n\nMatriz Quadrada Invertida !");
-            Console.WriteLine();
+            Char[,] novoArray = new Char[tamanho, tamanho];
+
             for (int i = 0; i < tamanho; i++)
             {
                 for (int j = 0; j < tamanho; j++)
                 {
-                    Console.Write(array[j, i]);
+                    novoArray[i, j] = array[j, i];
                 }
-                if (i != tamanho - 1) Console.WriteLine();
             }
+
+            Console.WriteLine("Matriz invertida.");
+            return novoArray;
         }
 
         private static void CopiarParaNovoArquivo(Char[,] array, int tamanho)
         {
-            Console.WriteLine("\n\n\nDeseja salvar este nova matriz ?");
-            Console.WriteLine("\nS - SIM\nN - NÃO");
-            Char opcao = Console.ReadKey().KeyChar;
+            String caminho = "NovaMatriz.txt";
+            StreamWriter salvar = new StreamWriter("../../" + caminho);
 
-            if (opcao.ToString().Trim().ToUpper() == "S")
+            for (int i = 0; i < tamanho; i++)
             {
-                StreamWriter salvar = new StreamWriter("../../matrizInvertida.txt");
-
-                for (int i = 0; i < tamanho; i++)
+                for (int j = 0; j < tamanho; j++)
                 {
-                    for (int j = 0; j < tamanho; j++)
-                    {
-                        salvar.Write(array[j, i]);
-                    }
-                    if (i != tamanho - 1) salvar.WriteLine();
+                    salvar.Write(array[i, j]);
                 }
-
-                salvar.Close();
+                if (i != tamanho - 1) salvar.WriteLine();
             }
+
+            Console.WriteLine("\nMatriz salva com o nome " + caminho);
+            salvar.Close();
         }
 
         private static Boolean ValidarFormatoMatriz(int qtCaracteresLinha, String linha)
@@ -179,7 +225,7 @@ namespace Matrizes
             Console.Write("Digite o nome do arquivo TXT a ser a ser imprimido: ");
             String nomeDoArquivo = Console.ReadLine().ToString().Trim().ToLower();
 
-            if (String.IsNullOrEmpty(nomeDoArquivo)) nomeDoArquivo = "matriz";
+            if (String.IsNullOrEmpty(nomeDoArquivo)) nomeDoArquivo = "MatrizAtual";
 
             if (!(nomeDoArquivo.Split('.').Length > 1))
             {
