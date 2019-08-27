@@ -21,6 +21,7 @@ namespace Matrizes
                 {
                     while ((linha = arquivo.ReadLine()) != null)
                     {
+
                         //Popula os campos na primeira execução.
                         if (qtCaracteresLinha == 0)
                         {
@@ -34,8 +35,14 @@ namespace Matrizes
                             matrizAtual[qtColunas, posicaoLinha] = linha[posicaoLinha];
                         }
 
+                        //Valida se a linha tem a mesma quantidade caracteres.
+                        ValidarFormatoMatriz(qtCaracteresLinha, linha);
+
                         qtColunas++;
                     }
+
+                    //Valida se a coluna tem a mesma quantidade de linha.
+                    ValidarMatrizQuadrada(qtColunas, qtCaracteresLinha);
 
                     while (opcaoMenu != 57)
                     {
@@ -49,7 +56,10 @@ namespace Matrizes
                                 ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
                                 break;
                             case 50:
+                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
                                 matrizAtual = InverterMatriz(matrizAtual, qtCaracteresLinha);
+                                Console.WriteLine("\n\n");
+                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
                                 break;
                             case 51:
                                 ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
@@ -70,7 +80,7 @@ namespace Matrizes
                             Console.ReadKey();
                         }
                     }
-                }//Data = {System.Collections.ListDictionaryInternal}
+                }
             }
             catch (IndexOutOfRangeException)
             {
@@ -90,42 +100,35 @@ namespace Matrizes
 
         }
 
-        private static Char[,] TrocarCaractere(Char[,] array, int tamanho)
+        private static Char[,] TrocarCaractere(Char[,] antigoArray, int tamanho)
         {
             Char[,] novoArray = new Char[tamanho, tamanho];
-            Int32 linha = 0, coluna = 0;
-            Char novoValor = '0';
-            Boolean validacao = true;
+            Char caractere;
+            Char novoValor;
 
-            while (validacao)
-            {
-                Console.Write("\nDigite a LINHA que deseja alterar de 0 a " + (tamanho - 1) + ": ");
-                linha = Convert.ToInt32(Console.ReadLine());
-                if (linha < tamanho || linha >= 0) validacao = false;
-            }
-            validacao = true;
-            while (validacao)
-            {
-                Console.Write("\nDigite a COLUNA que deseja alterar de 0 a " + (tamanho - 1) + ": ");
-                coluna = Convert.ToInt32(Console.ReadLine());
-                if (coluna < tamanho || coluna >= 0) validacao = false;
-            }
+            Console.Write("\nDigite o CARACTERE que deseja alterar: ");
+            caractere = Console.ReadKey().KeyChar;
 
             Console.Write("\nDigite o NOVO VALOR a ser alterado: ");
-            novoValor = Convert.ToChar(Console.ReadLine());
+            novoValor = Console.ReadKey().KeyChar;
 
             for (int i = 0; i < tamanho; i++)
             {
                 for (int j = 0; j < tamanho; j++)
                 {
-                    novoArray[i, j] = array[j, i];
+                    if (caractere == antigoArray[i, j])
+                    {
+                        novoArray[i, j] = novoValor;
+                    }
+                    else
+                    {
+                        novoArray[i, j] = antigoArray[i, j];
+                    }
                 }
             }
 
-            novoArray[linha, coluna] = novoValor;
-
             Console.Clear();
-            ImprimirMatrizOriginal(array, tamanho);
+            ImprimirMatrizOriginal(antigoArray, tamanho);
             Console.WriteLine("\n\n");
             ImprimirMatrizOriginal(novoArray, tamanho);
 
@@ -153,7 +156,7 @@ namespace Matrizes
 
         private static void ImprimirMatrizOriginal(Char[,] array, int tamanho)
         {
-            Console.WriteLine("Matriz Quadrada atual !");
+            Console.WriteLine("Matriz Quadrada !");
             Console.WriteLine();
             for (int i = 0; i < tamanho; i++)
             {
@@ -177,7 +180,6 @@ namespace Matrizes
                 }
             }
 
-            Console.WriteLine("Matriz invertida.");
             return novoArray;
         }
 
@@ -199,25 +201,21 @@ namespace Matrizes
             salvar.Close();
         }
 
-        private static Boolean ValidarFormatoMatriz(int qtCaracteresLinha, String linha)
+        private static void ValidarFormatoMatriz(int qtCaracteresLinha, String linha)
         {
             if (qtCaracteresLinha != linha.Length)
             {
-                Console.WriteLine("Matriz em formato incorreto!");
-                return false;
+                throw new ArgumentException("Matriz em formato incorreto!", "Matriz não quadrada");
             }
-
-            return true;
         }
 
-        private static Boolean ValidarMatrizQuadrada(int coluna, int linha)
+        private static void ValidarMatrizQuadrada(int coluna, int linha)
         {
             if (coluna != linha)
             {
-                Console.WriteLine("Não é uma matriz quadrada! Quantidade de linhas diferente de colunas!");
-                return false;
+                throw new ArgumentException("Não é uma matriz quadrada! Quantidade de linhas diferente de colunas!", 
+                    "Matriz não quadrada");
             }
-            return true;
         }
 
         private static String PerguntarNomeArquivo()
