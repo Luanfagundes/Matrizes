@@ -6,99 +6,99 @@ namespace Matrizes
     class Program
     {
 
-        public static void Main(string[] args)
-        {
-            try
-            {
-                String linha, nomeDoArquivo;
-                Int32 qtColunas = 0, qtCaracteresLinha = 0;
-                Char[,] matrizAtual = new Char[0, 0];
-                Int16 opcaoMenu = 0;
+        //public static void Main(string[] args)
+        //{
+        //    try
+        //    {
+        //        String linha, nomeDoArquivo;
+        //        Int32 qtColunas = 0, qtCaracteresLinha = 0;
+        //        Char[,] matrizAtual = new Char[0, 0];
+        //        Int16 opcaoMenu = 0;
 
-                nomeDoArquivo = PerguntarNomeArquivo();
+        //        nomeDoArquivo = PerguntarNomeArquivo();
 
-                using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
-                {
-                    while ((linha = arquivo.ReadLine()) != null)
-                    {
+        //        using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
+        //        {
+        //            while ((linha = arquivo.ReadLine()) != null)
+        //            {
 
-                        //Popula os campos na primeira execução.
-                        if (qtCaracteresLinha == 0)
-                        {
-                            qtCaracteresLinha = linha.Length;
-                            matrizAtual = new Char[linha.Length, linha.Length];
-                        }
+        //                //Popula os campos na primeira execução.
+        //                if (qtCaracteresLinha == 0)
+        //                {
+        //                    qtCaracteresLinha = linha.Length;
+        //                    matrizAtual = new Char[linha.Length, linha.Length];
+        //                }
 
-                        //Salva no array na variavel array.
-                        for (int posicaoLinha = 0; posicaoLinha < linha.Length; posicaoLinha++)
-                        {
-                            matrizAtual[qtColunas, posicaoLinha] = linha[posicaoLinha];
-                        }
+        //                //Salva no array na variavel array.
+        //                for (int posicaoLinha = 0; posicaoLinha < linha.Length; posicaoLinha++)
+        //                {
+        //                    matrizAtual[qtColunas, posicaoLinha] = linha[posicaoLinha];
+        //                }
 
-                        //Valida se a linha tem a mesma quantidade caracteres.
-                        ValidarFormatoMatriz(qtCaracteresLinha, linha);
+        //                //Valida se a linha tem a mesma quantidade caracteres.
+        //                ValidarFormatoMatriz(qtCaracteresLinha, linha);
 
-                        qtColunas++;
-                    }
+        //                qtColunas++;
+        //            }
 
-                    //Valida se a coluna tem a mesma quantidade de linha.
-                    ValidarMatrizQuadrada(qtColunas, qtCaracteresLinha);
+        //            //Valida se a coluna tem a mesma quantidade de linha.
+        //            ValidarMatrizQuadrada(qtColunas, qtCaracteresLinha);
 
-                    while (opcaoMenu != 57)
-                    {
-                        Menu();
-                        opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
-                        Console.Clear();
+        //            while (opcaoMenu != 57)
+        //            {
+        //                Menu();
+        //                opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
+        //                Console.Clear();
 
-                        switch (opcaoMenu)
-                        {
-                            case 49:
-                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                                break;
-                            case 50:
-                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                                matrizAtual = InverterMatriz(matrizAtual, qtCaracteresLinha);
-                                Console.WriteLine("\n\n");
-                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                                break;
-                            case 51:
-                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                                matrizAtual = TrocarCaractere(matrizAtual, qtCaracteresLinha);
-                                break;
-                            case 52:
-                                CopiarParaNovoArquivo(matrizAtual, qtCaracteresLinha);
-                                break;
-                            case 57:
-                                break;
-                            default:
-                                Console.WriteLine("\nOpção invalida.");
-                                break;
-                        }
-                        if (opcaoMenu != 57)
-                        {
-                            Console.WriteLine("\n\n\n\n\t\t\t\t\t\tPressione uma tecla para voltar!");
-                            Console.ReadKey();
-                        }
-                    }
-                }
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Console.WriteLine("\nMatriz em formato incorreto.");
-                Console.ReadKey();
-            }
-            catch (FormatException e)
-            {
-                Console.WriteLine("\nValor incorreto!");
-                Console.ReadKey();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("\n" + e.Message);
-                Console.ReadKey();
-            }
+        //                switch (opcaoMenu)
+        //                {
+        //                    case 49:
+        //                        ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+        //                        break;
+        //                    case 50:
+        //                        ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+        //                        matrizAtual = InverterMatriz(matrizAtual, qtCaracteresLinha);
+        //                        Console.WriteLine("\n\n");
+        //                        ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+        //                        break;
+        //                    case 51:
+        //                        ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+        //                        matrizAtual = TrocarCaractere(matrizAtual, qtCaracteresLinha);
+        //                        break;
+        //                    case 52:
+        //                        CopiarParaNovoArquivo(matrizAtual, qtCaracteresLinha);
+        //                        break;
+        //                    case 57:
+        //                        break;
+        //                    default:
+        //                        Console.WriteLine("\nOpção invalida.");
+        //                        break;
+        //                }
+        //                if (opcaoMenu != 57)
+        //                {
+        //                    Console.WriteLine("\n\n\n\n\t\t\t\t\t\tPressione uma tecla para voltar!");
+        //                    Console.ReadKey();
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (IndexOutOfRangeException)
+        //    {
+        //        Console.WriteLine("\nMatriz em formato incorreto.");
+        //        Console.ReadKey();
+        //    }
+        //    catch (FormatException e)
+        //    {
+        //        Console.WriteLine("\nValor incorreto!");
+        //        Console.ReadKey();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("\n" + e.Message);
+        //        Console.ReadKey();
+        //    }
 
-        }
+        //}
 
         private static Char[,] TrocarCaractere(Char[,] antigoArray, int tamanho)
         {

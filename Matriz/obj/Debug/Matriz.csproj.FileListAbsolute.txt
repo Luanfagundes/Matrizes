@@ -5,3 +5,10 @@ C:\Users\alu201517893\Desktop\Matfiz\Matrizes\Matriz\obj\Debug\Matriz.csprojAsse
 C:\Users\alu201517893\Desktop\Matfiz\Matrizes\Matriz\obj\Debug\Matriz.csproj.CoreCompileInputs.cache
 C:\Users\alu201517893\Desktop\Matfiz\Matrizes\Matriz\obj\Debug\Matriz.exe
 C:\Users\alu201517893\Desktop\Matfiz\Matrizes\Matriz\obj\Debug\Matriz.pdb
+C:\Users\alu201623197\Desktop\Matrizes\Matriz\obj\Debug\Matriz.csprojAssemblyReference.cache
+C:\Users\alu201623197\Desktop\Matrizes\Matriz\obj\Debug\Matriz.csproj.CoreCompileInputs.cache
+C:\Users\alu201623197\Desktop\Matrizes\Matriz\obj\Debug\Matriz.exe
+C:\Users\alu201623197\Desktop\Matrizes\Matriz\obj\Debug\Matriz.pdb
+C:\Users\alu201623197\Desktop\Matrizes\Matriz\bin\Debug\Matriz.exe.config
+C:\Users\alu201623197\Desktop\Matrizes\Matriz\bin\Debug\Matriz.exe
+C:\Users\alu201623197\Desktop\Matrizes\Matriz\bin\Debug\Matriz.pdb
