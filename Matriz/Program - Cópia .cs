@@ -19,25 +19,25 @@ namespace Matrizes
 
                 using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
                 {
-                    while ((linha = arquivo.ReadLine()) != null)
+                    string file = new StreamReader("../../" + nomeDoArquivo).ReadToEnd();
+                    string[] lines = file.Replace("\r", String.Empty).Split('\n');
+                    int countOfLines = lines.GetLength(0);
+                    //string[] col = lines.
+
+                    //ValidarFormatoMatriz(Convert.ToInt32(lines.Length), countOfLines);
+                    
+                    //Salva no array na variavel array.
+                    for (int i = 0; i < qtCaracteresLinha; i++)
                     {
-                        string file = new StreamReader("../../" + nomeDoArquivo).ReadToEnd();
-                        string[] lines = file.Split('\n');
-                        int countOfLines = lines.GetLength(0);
-
-                        ValidarFormatoMatriz(linha.Length, countOfLines);
                         //Popula os campos na primeira execução.
-                        qtCaracteresLinha = linha.Length;
+                        //qtCaracteresLinha = linha[i].Split(' ').Length;
 
-                        matrizAtual = new int[countOfLines, qtCaracteresLinha];
+                        //matrizAtual = new int[countOfLines, qtCaracteresLinha];
 
-                        //Salva no array na variavel array.
-                        for (int posicaoLinha = 0; posicaoLinha < linha.Length; posicaoLinha++)
-                        {
-                            matrizAtual[qtColunas, posicaoLinha] = int.Parse(linha[posicaoLinha].ToString());
-                        }
-                        qtColunas++;
+                        //matrizAtual[qtColunas, posicaoLinha] = int.Parse(linha[posicaoLinha].ToString());
                     }
+                    qtColunas++;
+
                     while (opcaoMenu != 57)
                     {
                         Menu();
@@ -182,7 +182,7 @@ namespace Matrizes
             Console.Write("Digite o nome do arquivo TXT a ser a ser imprimido: ");
             String nomeDoArquivo = Console.ReadLine().ToString().Trim().ToLower();
 
-            if (String.IsNullOrEmpty(nomeDoArquivo)) nomeDoArquivo = "MatrizAtual";
+            if (String.IsNullOrEmpty(nomeDoArquivo)) nomeDoArquivo = "matriz";
 
             if (!(nomeDoArquivo.Split('.').Length > 1))
             {
