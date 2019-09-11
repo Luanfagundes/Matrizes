@@ -10,9 +10,8 @@ namespace Matrizes
         {
             try
             {
-                String linha, nomeDoArquivo;
-                Int32 qtColunas = 0, qtCaracteresLinha = 0;
-                int[,] matrizAtual = new int[0, 0];
+                String nomeDoArquivo;
+                int[,] matriz;
                 Int16 opcaoMenu = 0;
 
                 nomeDoArquivo = PerguntarNomeArquivo();
@@ -21,22 +20,29 @@ namespace Matrizes
                 {
                     string file = new StreamReader("../../" + nomeDoArquivo).ReadToEnd();
                     string[] lines = file.Replace("\r", String.Empty).Split('\n');
-                    int countOfLines = lines.GetLength(0);
-                    //string[] col = lines.
+                    string[] col;
 
-                    //ValidarFormatoMatriz(Convert.ToInt32(lines.Length), countOfLines);
-                    
-                    //Salva no array na variavel array.
-                    for (int i = 0; i < qtCaracteresLinha; i++)
+                    int valorMax = file.Replace("\n", String.Empty).Replace("\r", String.Empty).Split(' ').Length;
+                    matriz = new int[valorMax, valorMax];
+
+                    while (valorMax < 0)
                     {
-                        //Popula os campos na primeira execução.
-                        //qtCaracteresLinha = linha[i].Split(' ').Length;
 
-                        //matrizAtual = new int[countOfLines, qtCaracteresLinha];
+                        for (int i = 0; i < valorMax; i++)
+                        {
+                            col = lines[i].Split(' ');
+                            ValidarFormatoMatriz(lines.Length, col.Length);
 
-                        //matrizAtual[qtColunas, posicaoLinha] = int.Parse(linha[posicaoLinha].ToString());
+                            //Popula os campos na primeira execução.
+                            //qtCaracteresLinha = linha[i].Split(' ').Length;
+
+                            //matrizAtual = new int[countOfLines, qtCaracteresLinha];
+
+                            //matrizAtual[qtColunas, posicaoLinha] = int.Parse(linha[posicaoLinha].ToString());
+                        }
+
+                        valorMax--;
                     }
-                    qtColunas++;
 
                     while (opcaoMenu != 57)
                     {
@@ -46,18 +52,18 @@ namespace Matrizes
 
                         switch (opcaoMenu)
                         {
-                            case 49:
-                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                                break;
-                            case 50:
-                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                                matrizAtual = InverterMatriz(matrizAtual, qtCaracteresLinha);
-                                Console.WriteLine("\n\n");
-                                ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                                break;
-                            case 52:
-                                CopiarParaNovoArquivo(matrizAtual, qtCaracteresLinha);
-                                break;
+                            //case 49:
+                            //    ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+                            //    break;
+                            //case 50:
+                            //    ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+                            //    matrizAtual = InverterMatriz(matrizAtual, qtCaracteresLinha);
+                            //    Console.WriteLine("\n\n");
+                            //    ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
+                            //    break;
+                            //case 52:
+                            //    CopiarParaNovoArquivo(matrizAtual, qtCaracteresLinha);
+                            //    break;
                             case 57:
                                 break;
                             default:
