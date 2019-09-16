@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Matrizes
 {
@@ -11,8 +12,8 @@ namespace Matrizes
             try
             {
                 String nomeDoArquivo;
-                int[,] matriz;
                 Int16 opcaoMenu = 0;
+                string[,] matriz;
 
                 nomeDoArquivo = PerguntarNomeArquivo();
 
@@ -20,28 +21,34 @@ namespace Matrizes
                 {
                     string file = new StreamReader("../../" + nomeDoArquivo).ReadToEnd();
                     string[] lines = file.Replace("\r", String.Empty).Split('\n');
-                    string[] col;
+                    string[] col = new string[0];
 
-                    int valorMax = file.Replace("\n", String.Empty).Replace("\r", String.Empty).Split(' ').Length;
-                    matriz = new int[valorMax, valorMax];
-
-                    while (valorMax < 0)
+                    //elimina os espaços duplos
+                    for (int i = 0; i < lines.Length; i++)
                     {
+                        lines[i] = Regex.Replace(lines[i].Trim(), @"\s+", " ");
+                    }
 
-                        for (int i = 0; i < valorMax; i++)
+                    //validar valor de 0 a 255
+                    //calcula colunas
+                    //valida matriz. Linhas e Colunas Pares.
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        ValidarFormatoMatriz(lines.Length, lines[i].Split(' ').Length);
+                        ValidarConteudo(lines[i].Split(' '));
+
+                        if (col.Length < lines[i].Split(' ').Length) col = new string[lines[i].Split(' ').Length];
+                    }
+
+                    //popula a matriz geral.
+                    matriz = new string[lines.Length, col.Length];
+
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        for (int j = 0; j < lines[i].Split(' ').Length; j++)
                         {
-                            col = lines[i].Split(' ');
-                            ValidarFormatoMatriz(lines.Length, col.Length);
-
-                            //Popula os campos na primeira execução.
-                            //qtCaracteresLinha = linha[i].Split(' ').Length;
-
-                            //matrizAtual = new int[countOfLines, qtCaracteresLinha];
-
-                            //matrizAtual[qtColunas, posicaoLinha] = int.Parse(linha[posicaoLinha].ToString());
+                            matriz[i, j] = lines[i].Split(' ')[j];
                         }
-
-                        valorMax--;
                     }
 
                     while (opcaoMenu != 57)
@@ -52,19 +59,21 @@ namespace Matrizes
 
                         switch (opcaoMenu)
                         {
-                            //case 49:
-                            //    ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                            //    break;
-                            //case 50:
-                            //    ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                            //    matrizAtual = InverterMatriz(matrizAtual, qtCaracteresLinha);
-                            //    Console.WriteLine("\n\n");
-                            //    ImprimirMatrizOriginal(matrizAtual, qtCaracteresLinha);
-                            //    break;
-                            //case 52:
-                            //    CopiarParaNovoArquivo(matrizAtual, qtCaracteresLinha);
-                            //    break;
-                            case 57:
+                            case 49:
+                                ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
+                                break;
+                            case 50:
+                                ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
+                                matriz = InverterMatriz(matriz, lines.Length, col.Length);
+                                Console.WriteLine("\n\n");
+                                ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
+                                break;
+                            case 52:
+                                CopiarParaNovoArquivo(matriz, lines.Length, col.Length);
+                                break;
+                            case 51:
+                                ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
+                                matriz = TrocarCaractere(matriz, lines.Length, col.Length);
                                 break;
                             default:
                                 Console.WriteLine("\nOpção invalida.");
@@ -96,7 +105,6 @@ namespace Matrizes
 
         }
 
-
         private static void Menu()
         {
             Console.Clear();
@@ -116,26 +124,25 @@ namespace Matrizes
             Console.WriteLine(textoMenu);
         }
 
-        private static void ImprimirMatrizOriginal(int[,] array, int tamanho)
+        private static void ImprimirMatrizOriginal(string[,] array, int linhas, int colunas)
         {
-            Console.WriteLine();
-            for (int i = 0; i < tamanho; i++)
+            for (int i = 0; i < linhas; i++)
             {
-                for (int j = 0; j < tamanho; j++)
+                for (int j = 0; j < colunas; j++)
                 {
-                    Console.Write(array[i, j]);
+                    Console.Write(array[i, j] + " ");
                 }
                 Console.WriteLine();
             }
         }
 
-        private static int[,] InverterMatriz(int[,] array, int tamanho)
+        private static string[,] InverterMatriz(string[,] array, int linhas, int colunas)
         {
-            int[,] novoArray = new int[tamanho, tamanho];
+            string[,] novoArray = new string[linhas, colunas];
 
-            for (int i = 0; i < tamanho; i++)
+            for (int i = 0; i < linhas; i++)
             {
-                for (int j = 0; j < tamanho; j++)
+                for (int j = 0; j < colunas; j++)
                 {
                     novoArray[i, j] = array[j, i];
                 }
@@ -144,22 +151,77 @@ namespace Matrizes
             return novoArray;
         }
 
-        private static void CopiarParaNovoArquivo(int[,] array, int tamanho)
+        private static string[,] TrocarCaractere(string[,] antigoArray, int linhas, int colunas)
+        {
+            string[,] novoArray = new string[linhas, colunas];
+            int caractere;
+            int novoValor;
+
+            Console.Write("\nDigite o VALOR que deseja alterar: ");
+            caractere = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("\nDigite o NOVO VALOR a ser alterado: ");
+            novoValor = Convert.ToInt32(Console.ReadLine());
+            //string[] valor = new string[0];//novoValor;
+            //valor[0] = novoValor.ToString();
+            //ValidarConteudo(valor);
+
+            for (int i = 0; i < linhas; i++)
+            {
+                for (int j = 0; j < colunas; j++)
+                {
+                    if (caractere == Convert.ToInt32(antigoArray[i, j]))
+                    {
+                        novoArray[i, j] = novoValor.ToString();
+                    }
+                    else
+                    {
+                        novoArray[i, j] = antigoArray[i, j];
+                    }
+                }
+            }
+
+            Console.Clear();
+            ImprimirMatrizOriginal(antigoArray, linhas, colunas);
+            Console.WriteLine("\n\n");
+            ImprimirMatrizOriginal(novoArray, linhas, colunas);
+
+            return novoArray;
+        }
+
+        private static void CopiarParaNovoArquivo(string[,] array, int linhas, int colunas)
         {
             String caminho = "NovaMatriz.txt";
             StreamWriter salvar = new StreamWriter("../../" + caminho);
 
-            for (int i = 0; i < tamanho; i++)
+            for (int i = 0; i < linhas; i++)
             {
-                for (int j = 0; j < tamanho; j++)
+                for (int j = 0; j < colunas; j++)
                 {
-                    salvar.Write(array[i, j]);
+                    salvar.Write(array[i, j] );
+                    if (j != colunas - 1) salvar.Write(" ");
                 }
-                if (i != tamanho - 1) salvar.WriteLine();
+                if (i != linhas - 1) salvar.WriteLine();
             }
 
             Console.WriteLine("\nMatriz salva com o nome " + caminho);
             salvar.Close();
+        }
+
+        private static void ValidarConteudo(string[] linha)
+        {
+            for (int i = 0; i < linha.Length; i++)
+            {
+                if (Convert.ToInt32(linha[i]) > 255)
+                {
+                    throw new ArgumentException("Valor exece o limite de 255");
+                }
+
+                if (Convert.ToInt32(linha[i]) < 0)
+                {
+                    throw new ArgumentException("Valor inferior que 0");
+                }
+            }
         }
 
         private static void ValidarFormatoMatriz(int qtCaracteresLinha, int qtCaracteresColunas)
