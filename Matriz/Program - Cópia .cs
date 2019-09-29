@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Matrizes
 {
     class Program2
     {
+        public static string[] cabecalho;
 
         public static void Main(string[] args)
         {
@@ -20,22 +23,20 @@ namespace Matrizes
                 using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
                 {
                     string file = new StreamReader("../../" + nomeDoArquivo).ReadToEnd();
-                    string[] lines = file.Replace("\r", String.Empty).Split('\n');
+                    cabecalho = file.Replace("\r", String.Empty).Split('\n').Where((x, i) => i <= 3).ToArray();
+                    string[] lines = file.Replace("\r", String.Empty).Split('\n').Where((x, i) => i > 3).ToArray();
                     string[] col = new string[0];
 
                     //elimina os espaços duplos
-                    for (int i = 0; i < lines.Length; i++)
+                    /*for (int i = 0; i < lines.Length; i++)
                     {
                         lines[i] = Regex.Replace(lines[i].Trim(), @"\s+", " ");
-                    }
+                    }*/
 
-                    //validar valor de 0 a 255
-                    //calcula colunas
-                    //valida matriz. Linhas e Colunas Pares.
                     for (int i = 0; i < lines.Length; i++)
                     {
-                        ValidarFormatoMatriz(lines.Length, lines[i].Split(' ').Length);
-                        ValidarConteudo(lines[i].Split(' '));
+                        //ValidarFormatoMatriz(lines.Length, lines[i].Split(' ').Length);
+                        //ValidarConteudo(lines[i].Split(' '));
 
                         if (col.Length < lines[i].Split(' ').Length) col = new string[lines[i].Split(' ').Length];
                     }
@@ -63,17 +64,16 @@ namespace Matrizes
                                 ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
                                 break;
                             case 50:
-                                ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
                                 matriz = InverterMatriz(matriz, lines.Length, col.Length);
-                                Console.WriteLine("\n\n");
-                                ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
                                 break;
                             case 52:
                                 CopiarParaNovoArquivo(matriz, lines.Length, col.Length);
                                 break;
                             case 51:
-                                ImprimirMatrizOriginal(matriz, lines.Length, col.Length);
                                 matriz = TrocarCaractere(matriz, lines.Length, col.Length);
+                                break;
+                            case 53:
+                                ConvertParaImagem(matriz, lines.Length, col.Length);
                                 break;
                             default:
                                 Console.WriteLine("\nOpção invalida.");
@@ -115,13 +115,51 @@ namespace Matrizes
                         pularLinhaComTabulacao + "\t1 - Imprimir matriz \t\t*" +
                         pularLinhaComTabulacao + "\t2 - Inverter matriz \t\t*" +
                         pularLinhaComTabulacao + "\t3 - Trocar caractere da matriz \t*" +
-                        pularLinhaComTabulacao + "\t4 - Salvar matriz \t\t*" +
+                        pularLinhaComTabulacao + "\t4 - Salvar matriz em .TXT \t*" +
+                        pularLinhaComTabulacao + "\t5 - Salvar nova IMAGEM \t\t*" +
                         pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "\t9 - Sair! \t\t\t*" +
                         pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "****************************************");
 
             Console.WriteLine(textoMenu);
+        }
+
+        private static void ConvertParaImagem(string[,] array, int linhas, int colunas)
+        {
+            /*  Converter para PGM
+                    magick convert PDI/yyoriginal.jpg -colorspace gray -compress none -depth 8 PDI/yypgm.pgm
+
+                Converter para JPG
+                    magick convert PDI/yypgm.pgm PDI/yyconvertidopgn.jpg
+            */
+            try
+            {
+                CopiarParaNovoArquivo(array, linhas, colunas);
+
+                Process p = new Process();
+                ProcessStartInfo info = new ProcessStartInfo();
+                info.FileName = "cmd.exe";
+                info.RedirectStandardInput = true;
+                info.UseShellExecute = false;
+
+                p.StartInfo = info;
+                p.Start();
+
+                using (StreamWriter sw = p.StandardInput)
+                {
+                    if (sw.BaseStream.CanWrite)
+                    {
+                        sw.WriteLine("cd " + AppDomain.CurrentDomain.BaseDirectory.ToString());
+                        sw.WriteLine("cd../../../magik");
+                        sw.WriteLine("magick convert ../Matriz/NovaMatriz.txt PDI/NovaImagem.jpg");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\n" + e.Message);
+            }
         }
 
         private static void ImprimirMatrizOriginal(string[,] array, int linhas, int colunas)
@@ -162,9 +200,6 @@ namespace Matrizes
 
             Console.Write("\nDigite o NOVO VALOR a ser alterado: ");
             novoValor = Convert.ToInt32(Console.ReadLine());
-            //string[] valor = new string[0];//novoValor;
-            //valor[0] = novoValor.ToString();
-            //ValidarConteudo(valor);
 
             for (int i = 0; i < linhas; i++)
             {
@@ -181,18 +216,29 @@ namespace Matrizes
                 }
             }
 
-            Console.Clear();
-            ImprimirMatrizOriginal(antigoArray, linhas, colunas);
-            Console.WriteLine("\n\n");
-            ImprimirMatrizOriginal(novoArray, linhas, colunas);
+            //Console.Clear();
+            //ImprimirMatrizOriginal(antigoArray, linhas, colunas);
+            //Console.WriteLine("\n\n");
+            //ImprimirMatrizOriginal(novoArray, linhas, colunas);
 
             return novoArray;
         }
 
         private static void CopiarParaNovoArquivo(string[,] array, int linhas, int colunas)
         {
+            //TODO 4 primeiras linhas da imagem estão fixa
+            /* P2
+             * 256 256
+             * 255
+            */
+
             String caminho = "NovaMatriz.txt";
             StreamWriter salvar = new StreamWriter("../../" + caminho);
+
+            for (int k = 0; k < cabecalho.Length; k++)
+            {
+                salvar.WriteLine(cabecalho[k]);
+            }
 
             for (int i = 0; i < linhas; i++)
             {
