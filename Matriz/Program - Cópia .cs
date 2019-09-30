@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace Matrizes
 {
@@ -85,7 +86,7 @@ namespace Matrizes
                         }
                     }
 
-                    while (opcaoMenu != 57)
+                    while (opcaoMenu != 48)
                     {
                         Menu();
                         opcaoMenu = Convert.ToInt16(Console.ReadKey().KeyChar);
@@ -111,13 +112,17 @@ namespace Matrizes
                             case 54:
                             case 55:
                             case 56:
-                                ReduzirImagem(matriz, opcaoMenu);
+                            case 57:
+                                ReduzirImagem(matriz, opcaoMenu, lines.Length, col.Length);
+                                break;
+                            case 9:
+                                GerarHistograma(matriz, lines.Length, col.Length);
                                 break;
                             default:
                                 Console.WriteLine("\nOpção invalida.");
                                 break;
                         }
-                        if (opcaoMenu != 57)
+                        if (opcaoMenu != 48)
                         {
                             Console.WriteLine("\n\n\n\n\t\t\t\t\t\tPressione uma tecla para voltar!");
                             Console.ReadKey();
@@ -143,6 +148,52 @@ namespace Matrizes
 
         }
 
+        private static void GerarHistograma(string[,] matriz, int linha, int coluna)
+        {
+            List<String> qtindice = new List<String>();
+            Dictionary<String, Int64> qtdindicevalor = new Dictionary<String, Int64>();
+
+            for (int i = 0; i < linha; i++)
+            {
+                for (int j = 0; j < coluna; j++)
+                {
+                    if (!String.IsNullOrEmpty(matriz[i, j]))
+                    {
+                        if (qtindice.FindAll(x => x.ToString() == matriz[i, j].ToString()).Count == 0) qtindice.Add(matriz[i, j].ToString());
+                    }
+                }
+            }
+
+            qtindice.Sort();
+
+            for (int k = 0; k < qtindice.Count; k++)
+            {
+                Int64 valor = 0;
+                for (int i = 0; i < linha; i++)
+                {
+                    for (int j = 0; j < coluna; j++)
+                    {
+                        if (!String.IsNullOrEmpty(matriz[i, j]) && matriz[i, j] == qtindice[k])
+                        {
+                            valor++;
+                        }
+                    }
+                }
+                qtdindicevalor.Add(qtindice[k], valor);
+            }
+
+            String caminho = "Histograma.txt";
+            StreamWriter salvar = new StreamWriter("../../" + caminho);
+
+
+            foreach (var item in qtdindicevalor)
+            {
+                salvar.WriteLine(item.Key + " " + item.Value);
+            }
+
+            salvar.Close();
+        }
+
         private static void Menu()
         {
             Console.Clear();
@@ -156,11 +207,14 @@ namespace Matrizes
                         pularLinhaComTabulacao + "\t4 - Salvar matriz em .TXT \t*" +
                         pularLinhaComTabulacao + "\t5 - Salvar nova IMAGEM \t\t*" +
                         pularLinhaComTabulacao + tabulacao +
-                        pularLinhaComTabulacao + "\t6 - Diminuir Imagem 25% \t*" +
-                        pularLinhaComTabulacao + "\t7 - Diminuir Imagem 50% \t*" +
-                        pularLinhaComTabulacao + "\t8 - Diminuir Imagem 75% \t*" +
+                        pularLinhaComTabulacao + "\t6 - Diminuir a Imagem em 25% \t*" +
+                        pularLinhaComTabulacao + "\t7 - Diminuir a Imagem em 50% \t*" +
+                        pularLinhaComTabulacao + "\t8 - Diminuir a Imagem em 75% \t*" +
+                        pularLinhaComTabulacao + "\t9 - Deixa a Imagem 100% \t*" +
                         pularLinhaComTabulacao + tabulacao +
-                        pularLinhaComTabulacao + "\t9 - Sair! \t\t\t*" +
+                        pularLinhaComTabulacao + "\tTAB - Gerar histograma \t\t*" +
+                        pularLinhaComTabulacao + tabulacao +
+                        pularLinhaComTabulacao + "\t0 - Sair! \t\t\t*" +
                         pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "****************************************");
 
@@ -204,20 +258,23 @@ namespace Matrizes
             }
         }
 
-        private static void ReduzirImagem(string[,] array, short opcaoMenu)
+        private static void ReduzirImagem(string[,] array, short opcaoMenu, int linha, int coluna)
         {
 
             int tamanho = opcaoMenu == 54 ? 193 : opcaoMenu == 55 ? 129 : 65;
 
-            string[,] novoArray = new string[tamanho, tamanho];
+            if (opcaoMenu == 57) tamanho = 257;
 
-            for (int i = 0; i < tamanho; i++)
-            {
-                for (int j = 0; j < tamanho; j++)
-                {
-                    novoArray[i, j] = array[i, i];
-                }
-            }
+            string[,] novoArray = new string[linha, coluna];
+            novoArray = array;
+
+            //for (int i = 0; i < linha; i++)
+            //{
+            //    for (int j = 0; j < coluna; j++)
+            //    {
+            //        novoArray[i, j] = array[i, i];
+            //    }
+            //}
 
             cabecalho[2] = String.Format("{0} {1}", (tamanho - 1).ToString(), (tamanho - 1).ToString());
 
@@ -247,7 +304,6 @@ namespace Matrizes
 
                 tamanho = 33;
             }
-
 
             ConvertParaImagem(novoArray, tamanho, tamanho);
         }
@@ -295,13 +351,16 @@ namespace Matrizes
             {
                 for (int j = 0; j < colunas; j++)
                 {
-                    if (caractere == Convert.ToInt32(antigoArray[i, j]))
+                    if (!String.IsNullOrEmpty(antigoArray[i, j]))
                     {
-                        novoArray[i, j] = novoValor.ToString();
-                    }
-                    else
-                    {
-                        novoArray[i, j] = antigoArray[i, j];
+                        if (caractere == Convert.ToInt32(antigoArray[i, j]))
+                        {
+                            novoArray[i, j] = novoValor.ToString();
+                        }
+                        else
+                        {
+                            novoArray[i, j] = antigoArray[i, j];
+                        }
                     }
                 }
             }
