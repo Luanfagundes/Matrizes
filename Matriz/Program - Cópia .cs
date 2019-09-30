@@ -9,6 +9,9 @@ namespace Matrizes
     class Program2
     {
         public static string[] cabecalho;
+        public static string[,] matriz1 = new string[33, 33];
+        public static string[,] matriz2 = new string[129, 129];
+        public static string[,] matriz3 = new string[193, 193];
 
         public static void Main(string[] args)
         {
@@ -19,11 +22,17 @@ namespace Matrizes
                 string[,] matriz;
 
                 nomeDoArquivo = PerguntarNomeArquivo();
-
+                
                 using (StreamReader arquivo = new StreamReader("../../" + nomeDoArquivo))
                 {
+                    string file3 = new StreamReader("../../" + "tcened.txt").ReadToEnd();
+                    string file2 = new StreamReader("../../" + "tcevo.txt").ReadToEnd();
+                    string file1 = new StreamReader("../../" + "tted.txt").ReadToEnd();
                     string file = new StreamReader("../../" + nomeDoArquivo).ReadToEnd();
                     cabecalho = file.Replace("\r", String.Empty).Split('\n').Where((x, i) => i <= 3).ToArray();
+                    string[] lines1 = file1.Replace("\r", String.Empty).Split('\n').Where((x, i) => i > 3).ToArray();
+                    string[] lines2 = file2.Replace("\r", String.Empty).Split('\n').Where((x, i) => i > 3).ToArray();
+                    string[] lines3 = file3.Replace("\r", String.Empty).Split('\n').Where((x, i) => i > 3).ToArray();
                     string[] lines = file.Replace("\r", String.Empty).Split('\n').Where((x, i) => i > 3).ToArray();
                     string[] col = new string[0];
 
@@ -41,8 +50,32 @@ namespace Matrizes
                         if (col.Length < lines[i].Split(' ').Length) col = new string[lines[i].Split(' ').Length];
                     }
 
-                    //popula a matriz geral.
+                    //popula a matriz gerais.
                     matriz = new string[lines.Length, col.Length];
+
+                    for (int i = 0; i < lines1.Length; i++)
+                    {
+                        for (int j = 0; j < lines1[i].Split(' ').Length; j++)
+                        {
+                            matriz1[i, j] = lines1[i].Split(' ')[j];
+                        }
+                    }
+
+                    for (int i = 0; i < lines3.Length; i++)
+                    {
+                        for (int j = 0; j < lines3[i].Split(' ').Length; j++)
+                        {
+                            matriz3[i, j] = lines3[i].Split(' ')[j];
+                        }
+                    }
+
+                    for (int i = 0; i < lines2.Length; i++)
+                    {
+                        for (int j = 0; j < lines2[i].Split(' ').Length; j++)
+                        {
+                            matriz2[i, j] = lines2[i].Split(' ')[j];
+                        }
+                    }
 
                     for (int i = 0; i < lines.Length; i++)
                     {
@@ -74,6 +107,11 @@ namespace Matrizes
                                 break;
                             case 53:
                                 ConvertParaImagem(matriz, lines.Length, col.Length);
+                                break;
+                            case 54:
+                            case 55:
+                            case 56:
+                                ReduzirImagem(matriz, opcaoMenu);
                                 break;
                             default:
                                 Console.WriteLine("\nOpção invalida.");
@@ -118,6 +156,10 @@ namespace Matrizes
                         pularLinhaComTabulacao + "\t4 - Salvar matriz em .TXT \t*" +
                         pularLinhaComTabulacao + "\t5 - Salvar nova IMAGEM \t\t*" +
                         pularLinhaComTabulacao + tabulacao +
+                        pularLinhaComTabulacao + "\t6 - Diminuir Imagem 25% \t*" +
+                        pularLinhaComTabulacao + "\t7 - Diminuir Imagem 50% \t*" +
+                        pularLinhaComTabulacao + "\t8 - Diminuir Imagem 75% \t*" +
+                        pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "\t9 - Sair! \t\t\t*" +
                         pularLinhaComTabulacao + tabulacao +
                         pularLinhaComTabulacao + "****************************************");
@@ -160,6 +202,54 @@ namespace Matrizes
             {
                 Console.WriteLine("\n" + e.Message);
             }
+        }
+
+        private static void ReduzirImagem(string[,] array, short opcaoMenu)
+        {
+
+            int tamanho = opcaoMenu == 54 ? 193 : opcaoMenu == 55 ? 129 : 65;
+
+            string[,] novoArray = new string[tamanho, tamanho];
+
+            for (int i = 0; i < tamanho; i++)
+            {
+                for (int j = 0; j < tamanho; j++)
+                {
+                    novoArray[i, j] = array[i, i];
+                }
+            }
+
+            cabecalho[2] = String.Format("{0} {1}", (tamanho - 1).ToString(), (tamanho - 1).ToString());
+
+            if (opcaoMenu == 54)
+            {
+                novoArray = new string[193, 193];
+                novoArray = matriz3;
+                cabecalho[2] = "192 192";
+
+                tamanho = 193;
+            }
+
+            if (opcaoMenu == 55)
+            {
+                novoArray = new string[129, 129];
+                novoArray = matriz2;
+                cabecalho[2] = "128 128";
+
+                tamanho = 129;
+            }
+
+            if (opcaoMenu == 56)
+            {
+                novoArray = new string[33, 33];
+                novoArray = matriz1;
+                cabecalho[2] = "32 32";
+
+                tamanho = 33;
+            }
+
+
+            ConvertParaImagem(novoArray, tamanho, tamanho);
         }
 
         private static void ImprimirMatrizOriginal(string[,] array, int linhas, int colunas)
